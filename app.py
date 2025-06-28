@@ -1,33 +1,16 @@
 from flask import Flask, request, render_template
 from langdetect import detect
 from deep_translator import GoogleTranslator
-import os
 import requests
-
-# ✅ Optional TTS (works locally, not on Render)
-try:
-    import pyttsx3
-    tts_engine = pyttsx3.init()
-    tts_engine.setProperty('rate', 150)
-except:
-    tts_engine = None
+import os
 
 app = Flask(__name__)
 
-# ✅ Secure API key loading
+# ✅ Load OpenRouter API key from environment variable
 OPENROUTER_API_KEY = os.getenv("OPENROUTER_API_KEY")
 
-# ✅ TTS Function (local only)
-def speak_text(text):
-    if tts_engine:
-        try:
-            tts_engine.stop()
-            tts_engine.say(text)
-            tts_engine.runAndWait()
-        except RuntimeError:
-            pass
 
-# ✅ Generate response from OpenRouter
+# ✅ Generate response using OpenRouter API
 def generate_free_response(prompt):
     try:
         headers = {
@@ -50,7 +33,8 @@ def generate_free_response(prompt):
     except Exception as e:
         return f"❌ AI error: {str(e)}"
 
-# ✅ Main route
+
+# ✅ Flask route
 @app.route("/", methods=["GET", "POST"])
 def chatbot():
     user_msg = ""
@@ -66,31 +50,35 @@ def chatbot():
             except:
                 lang = "en"
 
-            # ✅ Fix short English message misclassification
+            # ✅ Fix for short English messages
             if len(user_msg.split()) <= 3:
                 if all(char in "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ?!" for char in user_msg.replace(" ", "")):
                     lang = "en"
 
-            # ✅ Limit to Hindi and English
+            # ✅ Only support English and Hindi
             if lang not in ['en', 'hi']:
                 bot_response = "❌ Sorry, I only support Hindi and English for now."
                 return render_template("index.html", user_msg=user_msg, bot_response=bot_response)
 
-            # ✅ Translate Hindi → English
+            # ✅ Translate Hindi to English
             translated_msg = user_msg
             if lang == 'hi':
                 translated_msg = GoogleTranslator(source='hi', target='en').translate(user_msg)
 
-            # ✅ Generate AI response
+            # ✅ Get AI response
             bot_response = generate_free_response(translated_msg)
 
-            # ✅ Translate English → Hindi (if needed)
+            # ✅ Translate back to Hindi if needed
             if lang == 'hi':
                 bot_response = GoogleTranslator(source='en', target='hi').translate(bot_response)
 
-            # ✅ Speak locally only
-            if "❌" not in bot_response and os.getenv("RENDER") != "True":
-                speak_text(bot_response)
+            # ✅ Speak response only on local (skip on Render)
+            if os.getenv("RENDER") != "True":
+                import pyttsx3
+                tts_engine = pyttsx3.init()
+                tts_engine.setProperty('rate', 150)
+                tts_engine.say(bot_response)
+                tts_engine.runAndWait()
 
         except Exception as e:
             print("Error:", e)
@@ -98,6 +86,7 @@ def chatbot():
 
     return render_template("index.html", user_msg=user_msg, bot_response=bot_response)
 
-# ✅ Local dev
+
+# ✅ Run locally
 if __name__ == "__main__":
     app.run(debug=True)
