@@ -5,23 +5,20 @@ import requests
 import os
 
 app = Flask(__name__)
+
+# ✅ Load API key safely
+OPENROUTER_API_KEY = os.getenv("OPENROUTER_API_KEY")
+if not OPENROUTER_API_KEY:
+    raise ValueError("❌ OPENROUTER_API_KEY not set in environment variables.")
+
 headers = {
-    "Authorization": f"Bearer {os.getenv('OPENROUTER_API_KEY')}",
+    "Authorization": f"Bearer {OPENROUTER_API_KEY}",
     "Content-Type": "application/json"
 }
 
-# ✅ Load OpenRouter API key from environment variable
-OPENROUTER_API_KEY = os.getenv("OPENROUTER_API_KEY")
-
-
-# ✅ Generate response using OpenRouter API
+# ✅ Generate response from OpenRouter
 def generate_free_response(prompt):
     try:
-        headers = {
-            "Authorization": f"Bearer {OPENROUTER_API_KEY}",
-            "Content-Type": "application/json"
-        }
-
         payload = {
             "model": "mistralai/mistral-7b-instruct",
             "messages": [
@@ -29,14 +26,11 @@ def generate_free_response(prompt):
                 {"role": "user", "content": prompt}
             ]
         }
-
         response = requests.post("https://openrouter.ai/api/v1/chat/completions", headers=headers, json=payload)
         response.raise_for_status()
         return response.json()['choices'][0]['message']['content'].strip()
-
     except Exception as e:
         return f"❌ AI error: {str(e)}"
-
 
 # ✅ Flask route
 @app.route("/", methods=["GET", "POST"])
@@ -54,42 +48,39 @@ def chatbot():
             except:
                 lang = "en"
 
-            # ✅ Fix for short English messages
             if len(user_msg.split()) <= 3:
-                if all(char in "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ?!" for char in user_msg.replace(" ", "")):
+                if all(char.isalpha() or char in "?! " for char in user_msg):
                     lang = "en"
 
-            # ✅ Only support English and Hindi
             if lang not in ['en', 'hi']:
                 bot_response = "❌ Sorry, I only support Hindi and English for now."
                 return render_template("index.html", user_msg=user_msg, bot_response=bot_response)
 
-            # ✅ Translate Hindi to English
-            translated_msg = user_msg
             if lang == 'hi':
                 translated_msg = GoogleTranslator(source='hi', target='en').translate(user_msg)
+            else:
+                translated_msg = user_msg
 
-            # ✅ Get AI response
             bot_response = generate_free_response(translated_msg)
 
-            # ✅ Translate back to Hindi if needed
             if lang == 'hi':
                 bot_response = GoogleTranslator(source='en', target='hi').translate(bot_response)
 
-            # ✅ Speak response only on local (skip on Render)
             if os.getenv("RENDER") != "True":
-                import pyttsx3
-                tts_engine = pyttsx3.init()
-                tts_engine.setProperty('rate', 150)
-                tts_engine.say(bot_response)
-                tts_engine.runAndWait()
+                try:
+                    import pyttsx3
+                    tts_engine = pyttsx3.init()
+                    tts_engine.setProperty('rate', 150)
+                    tts_engine.say(bot_response)
+                    tts_engine.runAndWait()
+                except:
+                    pass
 
         except Exception as e:
             print("Error:", e)
             bot_response = "❌ Sorry, something went wrong."
 
     return render_template("index.html", user_msg=user_msg, bot_response=bot_response)
-
 
 # ✅ Run locally
 if __name__ == "__main__":
