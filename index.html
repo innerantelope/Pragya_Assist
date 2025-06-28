@@ -1,19 +1,19 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>Pragya Assist</title>
+    <meta charset="UTF-8">
+    <title>Pragya Assist</title>
 </head>
 <body>
-  <h2>🤖 Pragya Assist</h2>
-  <form method="POST">
-    <input type="text" name="message" placeholder="Enter your message" required>
-    <button type="submit">Send</button>
-  </form>
+    <h1>🤖 Pragya Assist</h1>
+    <form method="POST">
+        <input type="text" name="message" placeholder="Enter your message" required>
+        <button type="submit">Send</button>
+    </form>
 
-  {% if user_msg %}
-    <p><strong>You:</strong> {{ user_msg }}</p>
-    <p><strong>Pragya Assist:</strong> {{ bot_response }}</p>
-  {% endif %}
+    {% if user_msg %}
+        <p><strong>You:</strong> {{ user_msg }}</p>
+        <p><strong>Pragya:</strong> {{ bot_response }}</p>
+    {% endif %}
 </body>
 </html>
