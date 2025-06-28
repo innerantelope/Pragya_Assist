@@ -12,11 +12,11 @@ app = Flask(__name__)
 tts_engine = pyttsx3.init()
 tts_engine.setProperty('rate', 150)
 
-def speak_text(text):
+'''def speak_text(text):
     try:
         tts_engine.stop()
         tts_engine.say(text)
-        tts_engine.runAndWait()
+        tts_engine.runAndWait()'''
     except RuntimeError:
         pass
 
