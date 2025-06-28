@@ -1,7 +1,5 @@
 Flask==2.3.3
-gunicorn==21.2.0
+langdetect==1.0.9
+deep-translator==1.11.4
 requests
-langdetect
-deep-translator
-python-dotenv
-SpeechRecognition
+gunicorn
