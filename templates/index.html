@@ -3,18 +3,25 @@
 <head>
     <meta charset="UTF-8">
     <title>Pragya Assist</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 <body>
-    <h1>🤖 Pragya Assist</h1>
-    <form method="POST">
-        <input type="text" name="message" placeholder="Type your message here" required>
-        <button type="submit">Send</button>
-    </form>
+    <div class="chat-container">
+        <div class="chat-header">
+            🤖 <strong>Pragya Assist</strong>
+        </div>
 
-    {% if user_msg %}
-        <p><strong>You:</strong> {{ user_msg }}</p>
-        <p><strong>Pragya:</strong> {{ bot_response }}</p>
-    {% endif %}
+        <div class="chat-box">
+            {% if user_msg %}
+                <div class="message user"><strong>You:</strong> {{ user_msg }}</div>
+                <div class="message bot"><strong>Pragya:</strong> {{ bot_response }}</div>
+            {% endif %}
+        </div>
+
+        <form class="chat-input-area" method="POST">
+            <input type="text" name="message" placeholder="Type your message here" required>
+            <button type="submit">Send</button>
+        </form>
+    </div>
 </body>
 </html>
-
