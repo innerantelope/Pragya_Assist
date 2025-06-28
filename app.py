@@ -5,6 +5,10 @@ import requests
 import os
 
 app = Flask(__name__)
+headers = {
+    "Authorization": f"Bearer {os.getenv('OPENROUTER_API_KEY')}",
+    "Content-Type": "application/json"
+}
 
 # ✅ Load OpenRouter API key from environment variable
 OPENROUTER_API_KEY = os.getenv("OPENROUTER_API_KEY")
