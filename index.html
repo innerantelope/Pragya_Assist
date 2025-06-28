@@ -3,17 +3,28 @@
 <head>
     <meta charset="UTF-8">
     <title>Pragya Assist</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 <body>
-    <h1>🤖 Pragya Assist</h1>
-    <form method="POST">
-        <input type="text" name="message" placeholder="Enter your message" required>
-        <button type="submit">Send</button>
-    </form>
+    <div class="chat-container">
+        <div class="chat-header">
+            <h2>🤖 Pragya Assist</h2>
+        </div>
 
-    {% if user_msg %}
-        <p><strong>You:</strong> {{ user_msg }}</p>
-        <p><strong>Pragya:</strong> {{ bot_response }}</p>
-    {% endif %}
+        <div class="chat-box">
+            {% if user_msg %}
+                <div class="message user">{{ user_msg }}</div>
+            {% endif %}
+            {% if bot_response %}
+                <div class="message bot">{{ bot_response }}</div>
+            {% endif %}
+        </div>
+
+        <form class="chat-input-area" method="post">
+            <input type="text" name="message" placeholder="Type a message..." required>
+            <button type="submit">Send</button>
+            <button type="button" id="mic-btn">🎤</button>
+        </form>
+    </div>
 </body>
 </html>
