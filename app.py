@@ -1,3 +1,5 @@
+import os
+api_key = os.getenv("OPENROUTER_API_KEY")
 from flask import Flask, request, render_template
 from langdetect import detect
 from deep_translator import GoogleTranslator
