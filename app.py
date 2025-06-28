@@ -7,7 +7,7 @@ import requests
 app = Flask(__name__)
 
 # ✅ OpenRouter API Key (Free from https://openrouter.ai/keys)
-OPENROUTER_API_KEY = "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"
+OPENROUTER_API_KEY = "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"
 # ✅ TTS Initialization
 tts_engine = pyttsx3.init()
 tts_engine.setProperty('rate', 150)
