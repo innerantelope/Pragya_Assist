@@ -1,5 +1,5 @@
 Flask==2.3.3
-langdetect==1.0.9
-deep-translator==1.11.4
 requests
+langdetect
+deep-translator==1.11.4
 gunicorn
