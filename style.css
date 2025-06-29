@@ -25,6 +25,13 @@
   margin-left: 10px;
 }
 
+.message.bot.welcome {
+    background-color: #e8f0fe;
+    font-weight: 500;
+    color: #1a237e;
+    border-left: 4px solid #5c67f2;
+    padding-left: 12px;
+}
 
 body {
     background-color: #f5f7fa;
