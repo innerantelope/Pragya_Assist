@@ -6,17 +6,16 @@ import os
 
 app = Flask(__name__)
 
-# ✅ Load API key safely
+#API KEY
 OPENROUTER_API_KEY = os.getenv("OPENROUTER_API_KEY")
 if not OPENROUTER_API_KEY:
-    raise ValueError("❌ OPENROUTER_API_KEY not set in environment variables.")
+    raise ValueError("OPENROUTER_API_KEY not set in environment variables.")
 
 headers = {
     "Authorization": f"Bearer {OPENROUTER_API_KEY}",
     "Content-Type": "application/json"
 }
-
-# ✅ Generate response from OpenRouter
+#responses
 def generate_free_response(prompt):
     try:
         payload = {
@@ -30,9 +29,9 @@ def generate_free_response(prompt):
         response.raise_for_status()
         return response.json()['choices'][0]['message']['content'].strip()
     except Exception as e:
-        return f"❌ AI error: {str(e)}"
+        return f" AI error: {str(e)}"
 
-# ✅ Flask route
+# Flask route
 @app.route("/", methods=["GET", "POST"])
 def chatbot():
     user_msg = ""
@@ -42,7 +41,7 @@ def chatbot():
         try:
             user_msg = request.form["message"]
 
-            # ✅ Language detection
+            #  Language detection
             try:
                 lang = detect(user_msg)
             except:
